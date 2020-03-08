@@ -509,48 +509,87 @@ public void display(boolean ascending, Stage ps, Scene scene) {
         	defFields.getChildren().add(addPOS);        	
         }
        
-        antsyn.getChildren().add(synHeader);
-        TextField synField = new TextField();
-        synField.setPromptText("Synonyms...");
-        antsyn.getChildren().add(synField);
-        
-        antsyn.getChildren().add(antHeader);
-        TextField antField = new TextField();
-        antField.setPromptText("Antonyms...");
-        antsyn.getChildren().add(antField);
-        
-        Button confirmNewWord = new Button("Add");
-        EventHandler<ActionEvent> submit = new EventHandler<ActionEvent>() {
-		    @Override
-		    public void handle(ActionEvent event) {
-		    	extraDefs = 0;
-		    	String newSpelling = spelling.getText();		    	
-		    	Words newWord = new Words(newSpelling, newDefinitions, newSynonoyms, newAntonyms);
-		    	
-		    }
-		};
+	        ArrayList<Definitions> newDefs = new ArrayList<Definitions>();
+	        antsyn.getChildren().add(synHeader);
+	        TextField synField = new TextField();
+	        synField.setPromptText("Synonyms...");
+	        antsyn.getChildren().add(synField);
+	        
+	        antsyn.getChildren().add(antHeader);
+	        TextField antField = new TextField();
+	        antField.setPromptText("Antonyms...");
+	        antsyn.getChildren().add(antField);
+	        
+	        
+	        Button confirmNewWord = new Button("Add");
+	        EventHandler<ActionEvent> submit = new EventHandler<ActionEvent>() {
+			    @Override
+			    public void handle(ActionEvent event) {
+			    	String[] tempAntonyms = synField.getText().split(",");
+			    	List<String> antList = Arrays.asList(tempAntonyms); 
+			    	ArrayList<String> antonyms = new ArrayList<String>(antList);
+			    	
+			    	String[] tempSynonyms = synField.getText().split(",");
+			    	List<String> synList = Arrays.asList(tempSynonyms); 
+			    	ArrayList<String> synonyms = new ArrayList<String>(synList);
+			    	for (int i = 1; i < (extraDefs + 3); i += 2) {	
 		
-		confirmNewWord.setOnAction(submit);
-        confirmNewWord.setLayoutX(5);
-     
-        right.getChildren().addAll(topRight, antsyn);
-        
-        
-        antsyn.getChildren().add(confirmNewWord);
-	    Separator separator2 = new Separator();
-	    separator2.setOrientation(Orientation.VERTICAL);
-	    spelling.setStrokeWidth(2); 
-	    list.setPrefWidth(150);
-	    int maxHeight = 600;
-	    list.setPrefHeight(maxHeight);
-	    left.setSpacing(5);
-	    right.setSpacing(10);
-	    left.setPadding(new Insets(2, 2, 2, 2));
-	    GridPane.setMargin(right, new Insets(2,10,2,2));
-	    HBox both = new HBox(left, right);
-	    both.setSpacing(20);
-	    content.add(both, 0, 0);
-	   
-    }
-	
-}
+							Definitions newDefinition = new Definitions(((TextField)defFields.getChildren().get(i)).getText(), ((ComboBox<String>) defFields.getChildren().get(i + 1)).getValue());
+			    			newDefs.add(newDefinition);
+							
+			    		 
+			    		
+			    	}
+			    	Words newWord = null;
+			    	String newSpelling = addSpelling.getText();		  
+			    	try {
+						newWord = new Words(newSpelling, newDefs, synonyms, antonyms);
+					} catch (JsonSyntaxException | JsonIOException | FileNotFoundException e) {
+						e.printStackTrace();
+					}
+			    	Dictionary.addWord(newWord);
+			    	data.clear();
+					  filterInput.textProperty().addListener(obs->{
+					    	
+					        String filter = filterInput.getText(); 
+					        if (filter == null || filter.length() == 0) {
+					            filteredData.setPredicate(s -> true);
+					        }
+					        else {
+					            filteredData.setPredicate(s -> s.matches(filter + ".*"));
+					        }
+					        
+					    });
+					   
+					    currentWordList = filteredData;
+					    
+					display(ascending, ps, scene);
+			    	extraDefs = 0;
+
+			    }
+			};
+			
+			confirmNewWord.setOnAction(submit);
+	        confirmNewWord.setLayoutX(5);
+	     
+	        right.getChildren().addAll(topRight, defFields, antsyn);
+	        
+	        
+	        antsyn.getChildren().add(confirmNewWord);
+		    Separator separator2 = new Separator();
+		    separator2.setOrientation(Orientation.VERTICAL);
+		    spelling.setStrokeWidth(2); 
+		    list.setPrefWidth(150);
+		    int maxHeight = 600;
+		    list.setPrefHeight(maxHeight);
+		    left.setSpacing(5);
+		    right.setSpacing(10);
+		    left.setPadding(new Insets(2, 2, 2, 2));
+		    GridPane.setMargin(right, new Insets(2,10,2,2));
+		    HBox both = new HBox(left, right);
+		    both.setSpacing(20);
+		    content.add(both, 0, 0);
+		   
+	    }
+		
+	}
