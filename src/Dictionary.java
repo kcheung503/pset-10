@@ -118,4 +118,20 @@ public static void addWord(Words word) {
         	
         }
         
+        wordList = newWordList;
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		String json = gson.toJson(wordList);
+		try {
+			
+			   FileWriter writer = new FileWriter(".\\JSON\\words.json");
+			  
+			   writer.write(json);
+			   writer.close();
+			  
+			  } catch (IOException e) {
+			   e.printStackTrace();
+			  }
+		
+    } 
+	
 }

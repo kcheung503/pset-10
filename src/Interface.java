@@ -1,6 +1,9 @@
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import javafx.scene.control.CheckBox;
@@ -15,11 +18,17 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.SelectionModel;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
@@ -51,7 +60,7 @@ import javafx.scene.paint.Color;
 		static private VBox antsyn = new VBox();
 		static private CheckBox asc = new CheckBox("asc");
 	    static private CheckBox desc = new CheckBox("desc");
-	    
+	    static private Boolean firstWord;
 	    static private ArrayList<Definitions> definitions = new ArrayList<Definitions>();
 	    private static VBox right = new VBox();
         static private ArrayList<String> synonyms = new ArrayList<String>();
@@ -64,6 +73,7 @@ import javafx.scene.paint.Color;
 		
 		private GridPane content;
 		private TextField filterInput;
+		private Scene scene;
 		private static int extraDefs = 0;
 		private static VBox left = new VBox();
 		private static Button addButton = new Button("Add");
@@ -73,7 +83,7 @@ import javafx.scene.paint.Color;
 		
 	public static void main(String[] args) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
 		Dictionary.addAllWords();
-		
+		firstWord = true;
 		asc.setSelected(true);
 	    launch(args);
 	    
