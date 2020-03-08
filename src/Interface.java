@@ -359,9 +359,104 @@ import javafx.scene.paint.Color;
 	      
 	}
 	
+public void display(boolean ascending, Stage ps, Scene scene) {
+		
+	    Dictionary.listSpellings(ascending).forEach(data::add);
+	    defHeader.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 21)); 
+	    synHeader.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 21));
+	    antHeader.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 21));
+
+		  content.setPadding(new Insets(5, 10, 5, 5));
+		 spelling.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 36)); 
+		 ArrayList<String> synonyms = new ArrayList<String>();
+
+         ArrayList<String> antonyms = new ArrayList<String>();
+         if (currentWord != null ) {
+        	
+             
+         	right.getChildren().clear();
+         	spelling.setText(currentWord.getSpelling());
+         	
+         	right.getChildren().addAll(spelling);
+         	right.getChildren().addAll(defHeader);
+         	definitions = currentWord.getDefintion();
+         	 for (Definitions def : definitions) {
+           	   right.getChildren().addAll(new Text(definitions.indexOf(def) + 1 + ". " + currentWord.getSpelling() + " (" + def.getPartOfSpeech() + ")"));
+           	   right.getChildren().addAll(new Text("\t" + def.getDefinition()));
+              }
+         }
+         
+       
+       
+        if (currentWord != null) {
+        synonyms = currentWord.getSynonyms();
+        for (String syn : synonyms) {
+     	   right.getChildren().addAll(new Text("\t" + ((int) synonyms.indexOf(syn) + 1) + ". " +  syn));
+        }
+        right.getChildren().add(synHeader);
+        }
+       
+        
+        if (currentWord != null) {
+     	   antonyms = currentWord.getAntonyms();
+            
+            right.getChildren().add(antHeader);
+           for (String ant : antonyms) {
+         	  right.getChildren().addAll(new Text("\t" +  ((int) antonyms.indexOf(ant) + 1) + ". " + ant));
+           }
+           if ( currentWord != null && !currentWordList.contains(currentWord.getSpelling())) {
+        	   	currentWord = null;
+        	   	
+            	right.getChildren().clear();
+            }
+   	      
+        }
+        
+         
+	     
+	      HBox check = new HBox(asc, desc);
+	      
+	      spelling.setFill(Color.BLACK); 
+	      Separator separator1 = new Separator();
+	    
+	      Separator separator2 = new Separator();
+	      separator2.setOrientation(Orientation.VERTICAL);
+	      spelling.setStrokeWidth(2); 
+	      
+	      HBox buttons = new HBox(addButton, rmButton);
+	      
+	      list.setPrefWidth(150);
+	      int maxHeight = 600;
+		list.setPrefHeight(maxHeight);
+		left = new VBox(buttons, filterInput, check, separator1, list);
+	      left.setSpacing(5);
+	      right.setSpacing(10);
+	      left.setPadding(new Insets(2, 2, 2, 2));
+	      GridPane.setMargin(right, new Insets(2,10,2,2));
+	      HBox both = new HBox(left, right);
+	      both.setSpacing(20);
+	      content.add(both, 0, 0);
+	      
+	      if (currentWord != null && !currentWordList.contains(currentWord.getSpelling())) {
+	    	  currentWord = null;
+          	right.getChildren().clear();
+          }
+	      EventHandler<ActionEvent> addWord = new EventHandler<ActionEvent>() {
+			    @Override
+			    public void handle(ActionEvent event) {
+			    	addWordScreen(ps, scene, left);
+			        event.consume();
+			    }
+			};
+			addButton.setOnAction(addWord);
+		  list.getSelectionModel().clearSelection();
+	      ps.setScene(scene);
+	      ps.show();
+    }
+	
 	public void addWordScreen(Stage ps, Scene scene, VBox left) {		
 		VBox topRight = new VBox();
-        
+        extraDefs = 0;
 		right.getChildren().clear();
 	    defHeader.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 21)); 
 	    synHeader.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 21));
@@ -379,7 +474,8 @@ import javafx.scene.paint.Color;
         
         
       
-        
+        VBox defFields = new VBox();
+        VBox AntSyn = new VBox();
               
         ObservableList<String> partsOfSpeech = 
         	    FXCollections.observableArrayList(
@@ -388,28 +484,29 @@ import javafx.scene.paint.Color;
         	        "Verb"
         	    );
         Button extraDef = new Button("+");
+        
         EventHandler<ActionEvent> addDefField = new EventHandler<ActionEvent>() {
 		    @Override
 		    public void handle(ActionEvent event) {
 		    	extraDefs++;
 		    	TextField newDefinition = new TextField();
 	        	newDefinition.setPromptText("New word...");
-	        	topRight.getChildren().add(newDefinition);
+	        	defFields.getChildren().add(newDefinition);
 	        	final ComboBox<String> addPOS = new ComboBox<String>(partsOfSpeech);
 	        	addPOS.setPromptText("Part of speech...");
-	        	topRight.getChildren().add(addPOS);  
+	        	defFields.getChildren().add(addPOS);  
 		    }
 		};
 		  extraDef.setOnAction(addDefField);
 	        HBox DefField = new HBox(defHeader, extraDef);
-	        topRight.getChildren().add(DefField);
+	        defFields.getChildren().add(DefField);
 	        for (int i = 0; i < (3 + extraDefs); i++) {
         	TextField newDefinition = new TextField();
         	newDefinition.setPromptText("New word...");
-        	topRight.getChildren().add(newDefinition);
-        	final ComboBox<String> addPOS = new ComboBox<String>(partsOfSpeech);
+        	defFields.getChildren().add(newDefinition);
+        	ComboBox<String> addPOS = new ComboBox<String>(partsOfSpeech);
         	addPOS.setPromptText("Part of speech...");
-        	topRight.getChildren().add(addPOS);        	
+        	defFields.getChildren().add(addPOS);        	
         }
        
         antsyn.getChildren().add(synHeader);
