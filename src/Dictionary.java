@@ -54,8 +54,7 @@ public class Dictionary {
 		return listOfWords;
 	}
 	
-	//@SuppressWarnings("null")
-	public static ArrayList<Words> sortObj(Boolean ascending, List<String> sortedSpellings) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
+public static ArrayList<Words> sortObj(Boolean ascending, List<String> sortedSpellings) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
 		
 		wordList = addAllWords();
 		ArrayList<Words> sortedObj = new ArrayList<Words>();
@@ -72,6 +71,16 @@ public class Dictionary {
 	}
 		return sortedObj;	
 	}
+	public static Words[] addToList(int n, Words wordList[], Words word) { 
+        Words newWordList[] = new Words[n + 1]; 
+
+        for (int i = 0; i < n; i++) {
+            newWordList[i] = wordList[i]; 
+        }
+        newWordList[n] = word; 
+  
+        return newWordList; 
+    } 
 	
 	private void addWord() {
 		//TODO implement adding words
