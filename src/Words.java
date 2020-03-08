@@ -35,12 +35,11 @@ public class Words {
 		return this.word;
 	}
 	
-	public int getId() {
-		return this.wordId;
-	}
-	
 	public ArrayList<Definitions> getDefintion() {
 		return this.definitions;
+	}
+	public String getADefintion(int index) {
+		return this.definitions.get(index).getDefinition();
 	}
 	public ArrayList<String> getSynonyms() {
 		return this.synonyms;
