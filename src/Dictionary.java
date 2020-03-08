@@ -82,12 +82,40 @@ public static ArrayList<Words> sortObj(Boolean ascending, List<String> sortedSpe
         return newWordList; 
     } 
 	
-	private void addWord() {
-		//TODO implement adding words
+public static void addWord(Words word) {
+		
+		Gson gson=new GsonBuilder().setPrettyPrinting().create();
+		String json = gson.toJson(addToList(wordList.length, wordList, word));
+	  wordList = addToList(wordList.length, wordList, word);
+	  try {
+	   FileWriter writer = new FileWriter(".\\JSON\\words.json");
+	   wordList = addAllWords();
+	   writer.write(json);
+	   writer.close();
+	  
+	  } catch (IOException e) {
+	   e.printStackTrace();
+	  }
+	  
+
 	}
-	
-	private void delWord() {
-		//TODO implement deleting words
-	}
-	
+	public static void delWord(Words[] wordsToDel) { 
+        Words newWordList[] = new Words[wordList.length - wordsToDel.length]; 
+        Boolean kill = false;
+        for (int i = 0; i < newWordList.length; i++) {
+        	kill = false;
+        	for (Words deadWord : wordsToDel) {
+        		if (wordList[i] == deadWord) {
+
+        			kill = true;
+        		}
+        		if (!kill) {
+            		newWordList[i] = wordList[i];
+            	} else {
+            		newWordList[i] = wordList[i + 1];
+            	}
+        	}
+        	
+        }
+        
 }
