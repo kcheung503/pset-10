@@ -96,117 +96,70 @@ import javafx.scene.paint.Color;
 		EventHandler<ActionEvent> removeWord = new EventHandler<ActionEvent>() {
 		    @Override
 		    public void handle(ActionEvent event) {
-		       rmButton.setText("rmWorks");
-		        event.consume();
+		    	if (list.getSelectionModel().getSelectedItems().size() != 0) { 
+		    	Alert alert = new Alert(AlertType.CONFIRMATION);
+		    	alert.setTitle("Confirmation Dialog");
+		    	alert.setHeaderText("DELETING WORD");
+		    	alert.setContentText("Are you sure you want to delete selected words?");
+
+		    	Optional<ButtonType> result = alert.showAndWait();
+		    	if (result.get() == ButtonType.OK && list.getSelectionModel().getSelectedIndices() != null) {
+		    		try {
+		    			Words[] wordsToDelete = new Words[list.getSelectionModel().getSelectedIndices().size()];
+		    			for (int i = 0; i < list.getSelectionModel().getSelectedItems().size(); i++) {
+		    				for (Words orgWord : Dictionary.wordList) {
+		    					if (orgWord.getSpelling().equals(list.getSelectionModel().getSelectedItems().get(i))) {
+		    						wordsToDelete[i] = orgWord;
+		    					}
+		    				}
+		    			}
+						Dictionary.delWord(wordsToDelete);
+						data.clear();
+						  filterInput.textProperty().addListener(obs->{
+						    	
+						        String filter = filterInput.getText().toLowerCase(); 
+						        if (filter == null || filter.length() == 0) {
+						            filteredData.setPredicate(s -> true);
+						        }
+						        else {
+						            filteredData.setPredicate(s -> s.toLowerCase().matches(filter + ".*"));
+						        }
+						        
+						    });
+						   
+						    currentWordList = filteredData;
+						    
+						display(ascending, primaryStage, scene);
+						Alert success = new Alert(AlertType.INFORMATION);
+						success.setHeaderText("Successfully deleted word!");
+						Optional<ButtonType> done = success.showAndWait();
+						
+						 if (done.isPresent() && done.get() == ButtonType.OK) {
+				    	     event.consume();
+				    	 }
+					} catch (JsonIOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (JsonSyntaxException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}		    	
+		    	} else {
+		    		event.consume();
+		    	}
+		      event.consume();
+		    } else {
+		    	Alert alert = new Alert(AlertType.ERROR);
+		    	alert.setTitle("ERROR");
+		    	alert.setHeaderText("No words to delete...");
+		    	Optional<ButtonType> result = alert.showAndWait();
+		    	 if (result.isPresent() && result.get() == ButtonType.OK) {
+		    	     event.consume();
+		    	 }
+		    	event.consume();
+		    }
 		    }
 		};
-		
-		right = new VBox();
-	    Dictionary.listSpellings(ascending).forEach(data::add);
-	  
-	    defHeader.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 21)); 
-	    synHeader.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 21));
-	    antHeader.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 21));
-	    filterInput = new TextField();
-	    
-	    
-	    filterInput.textProperty().addListener(obs->{
-	    	
-	        String filter = filterInput.getText(); 
-	        if (filter == null || filter.length() == 0) {
-	            filteredData.setPredicate(s -> true);
-	        }
-	        else {
-	            filteredData.setPredicate(s -> s.matches(filter + ".*"));
-	        }
-	        
-	    });
-	   
-	    currentWordList = filteredData;
-	    
-	    int maxHeight = 600;
-	   
-	    index = -1;
-	    content = new GridPane();
-	    
-	    content.setPadding(new Insets(5, 10, 5, 5));
-	    
-	    list.getSelectionModel().selectedItemProperty()
-        .addListener(new ChangeListener<String>() {
-          
-		
-
-		public void changed(ObservableValue<? extends String> observable,
-              String oldValue, String newValue) {
-			 index = currentWordList.indexOf(list.getSelectionModel().getSelectedItem());
-	            
-	     	   
-	            try {
-					objsDisplayed = Dictionary.sortObj(ascending, currentWordList);
-				} catch (JsonSyntaxException | JsonIOException | FileNotFoundException e) {
-					
-					e.printStackTrace();
-				}
-	            if (index != -1) {
-	            	
-	            	currentWord = objsDisplayed.get(index);
-	                	
-	            }
-			
-            
-           
-         
-            if (currentWord != null && !currentWordList.contains(currentWord.getSpelling())) {
-            	currentWord = null;
-		    	right.getChildren().clear();
-		    
-            }
-            
-            definitions = new ArrayList<Definitions>();
-
-            synonyms = new ArrayList<String>();
-
-            antonyms = new ArrayList<String>();
-            if (index >= 0) {
-            	
-                
-            	right.getChildren().clear();
-            	spelling.setText(currentWord.getSpelling());
-            	lastWord = currentWord;
-            	right.getChildren().addAll(spelling);
-            	right.getChildren().addAll(defHeader);
-            	definitions = currentWord.getDefintion();
-            }
-            
-           for (Definitions def : definitions) {
-        	   right.getChildren().addAll(new Text(definitions.indexOf(def) + 1 + ". " + currentWord.getSpelling() + " (" + def.getPartOfSpeech() + ")"));
-        	   right.getChildren().addAll(new Text("\t" + def.getDefinition()));
-           }
-          
-           if (index >= 0) {
-           synonyms = currentWord.getSynonyms();
-           for (String syn : synonyms) {
-        	   right.getChildren().addAll(new Text("\t" + ((int) synonyms.indexOf(syn) + 1) + ". " +  syn));
-           }
-           right.getChildren().add(synHeader);
-           }
-          
-           
-           if (index >= 0) {
-        	   antonyms = currentWord.getAntonyms();
-               
-               right.getChildren().add(antHeader);
-              for (String ant : antonyms) {
-            	  right.getChildren().addAll(new Text("\t" +  ((int) antonyms.indexOf(ant) + 1) + ". " + ant));
-              }
-           }
-            if (currentWord != null && !currentWordList.contains(currentWord.getSpelling())) {
-            	
-                currentWord = null;
-            	right.getChildren().clear();
-            }
-          }
-        });
 	    
 	    
 	      spelling.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 36)); 
