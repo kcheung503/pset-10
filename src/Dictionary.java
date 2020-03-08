@@ -34,10 +34,15 @@ public class Dictionary {
 		return wordList;
 	}
 	
-	public static ArrayList<String> listSpellings(Boolean ascending) {
+	public static ArrayList<String> listSpellings(Boolean ascending) throws NullPointerException {
 		ArrayList<String> listOfWords = new ArrayList<String>();
 		
-		for (Words word : wordList) {
+		int i = 0;
+		for (Words word : wordList)  {
+			if (word == null) {
+				System.out.println("this one is null " + i);
+			}
+			
 			listOfWords.add(word.getSpelling());
 		}
 		
