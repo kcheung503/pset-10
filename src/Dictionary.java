@@ -25,7 +25,6 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 
-
 public class Dictionary {
 	public static Words[] wordList;
 	
@@ -54,7 +53,7 @@ public class Dictionary {
 		return listOfWords;
 	}
 	
-public static ArrayList<Words> sortObj(Boolean ascending, List<String> sortedSpellings) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
+	public static ArrayList<Words> sortObj(Boolean ascending, List<String> sortedSpellings) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
 		
 		wordList = addAllWords();
 		ArrayList<Words> sortedObj = new ArrayList<Words>();
@@ -81,8 +80,8 @@ public static ArrayList<Words> sortObj(Boolean ascending, List<String> sortedSpe
   
         return newWordList; 
     } 
-	
-public static void addWord(Words word) {
+  
+	public static void addWord(Words word) {
 		
 		Gson gson=new GsonBuilder().setPrettyPrinting().create();
 		String json = gson.toJson(addToList(wordList.length, wordList, word));
@@ -117,7 +116,7 @@ public static void addWord(Words word) {
         	}
         	
         }
-        
+
         wordList = newWordList;
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		String json = gson.toJson(wordList);

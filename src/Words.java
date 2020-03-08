@@ -21,7 +21,6 @@ public class Words {
 		this.antonyms = antonyms;
 	
 	}
-	
 	public void setDefinition(Definitions definitions) {
 		this.definitions.add(definitions);  
 	}
