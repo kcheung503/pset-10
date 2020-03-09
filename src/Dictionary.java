@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
@@ -32,7 +33,7 @@ import java.io.FileReader;
 
 import java.util.ArrayList;
 
-public class Dictionay {
+public class Dictionary {
 
 	private JFrame frmDictionary;
 	private JTextField txtSearch;
@@ -47,7 +48,7 @@ public class Dictionay {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Dictionay window = new Dictionay();
+					Dictionary window = new Dictionary();
 					window.frmDictionary.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -88,7 +89,7 @@ public class Dictionay {
 	 * Create the application.
 	 * @throws FileNotFoundException 
 	 */
-	public Dictionay() throws FileNotFoundException {
+	public Dictionary() throws FileNotFoundException {
 		initialize();
 	}
 
